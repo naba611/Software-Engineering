@@ -1,0 +1,301 @@
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<style>
+    .profile-wrap {
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .profile-header {
+        margin-bottom: 28px;
+    }
+
+    .profile-header h1 {
+        font-family: 'Cinzel', serif;
+        font-size: 24px;
+        color: #d9a8a8;
+        letter-spacing: 0.06em;
+    }
+
+    .profile-header p {
+        color: #a89a9a;
+        font-size: 13px;
+        margin-top: 6px;
+    }
+
+    .profile-card {
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 14px;
+        padding: 28px 32px;
+    }
+
+    .profile-card label {
+        display: block;
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: #7a6a6a;
+        font-weight: 600;
+        margin-bottom: 5px;
+        margin-top: 16px;
+    }
+
+    .profile-card input[type="text"],
+    .profile-card input[type="email"],
+    .profile-card textarea,
+    .profile-card select {
+        width: 100%;
+        padding: 9px 12px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 7px;
+        color: #e0cccc;
+        font-family: 'Raleway', sans-serif;
+        font-size: 13px;
+        outline: none;
+        transition: border 0.2s;
+    }
+
+    .profile-card input[type="password"] {
+        width: 100%;
+        padding: 9px 12px;
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.1);
+        border-radius: 7px;
+        color: #e0cccc;
+        font-family: 'Raleway', sans-serif;
+        font-size: 13px;
+        outline: none;
+        transition: border 0.2s;
+    }
+
+    .profile-card input[type="password"]:focus {
+        border-color: rgba(217,168,168,0.4);
+    }
+
+    .profile-card input:focus,
+    .profile-card textarea:focus,
+    .profile-card select:focus {
+        border-color: rgba(217, 168, 168, 0.4);
+    }
+
+    .profile-card textarea {
+        resize: vertical;
+        min-height: 80px;
+    }
+
+    .section-divider {
+        border: none;
+        border-top: 1px solid rgba(255, 255, 255, 0.07);
+        margin: 22px 0;
+    }
+
+    .section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #d9a8a8;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    /* ── In-game role pills ── */
+    .ingame-role-row {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        margin-top: 8px;
+    }
+
+    .ingame-role-row label {
+        display: inline-flex;
+        align-items: center;
+        font-size: 12px;
+        text-transform: none;
+        letter-spacing: 0;
+        color: #c8b8b8;
+        background: rgba(255, 255, 255, 0.04);
+        border: 1px solid rgba(255, 255, 255, 0.09);
+        border-radius: 20px;
+        padding: 6px 16px;
+        cursor: pointer;
+        margin-top: 0;
+        margin-bottom: 0;
+        transition: background 0.2s, border-color 0.2s, color 0.2s;
+        user-select: none;
+    }
+
+    .ingame-role-row label:hover {
+        background: rgba(217, 168, 168, 0.1);
+        border-color: rgba(217, 168, 168, 0.3);
+        color: #e0cccc;
+    }
+
+    .ingame-role-row label.selected {
+        background: rgba(217, 168, 168, 0.18);
+        border-color: rgba(217, 168, 168, 0.5);
+        color: #d9a8a8;
+    }
+
+    .ingame-role-row input[type="radio"] {
+        display: none;
+    }
+
+    /* ── Buttons ── */
+    .btn-save {
+        margin-top: 24px;
+        width: 100%;
+        padding: 11px;
+        border-radius: 8px;
+        background: linear-gradient(135deg, #c46060, #a04040);
+        color: #fff;
+        font-family: 'Raleway', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        border: none;
+        cursor: pointer;
+        transition: background 0.2s;
+    }
+    .btn-save:hover { background: linear-gradient(135deg, #d47070, #b05050); }
+
+    .btn-change-pw {
+        margin-top: 24px;
+        width: 100%;
+        padding: 11px;
+        border-radius: 8px;
+        background: rgba(255,255,255,0.06);
+        border: 1px solid rgba(255,255,255,0.12);
+        color: #e0cccc;
+        font-family: 'Raleway', sans-serif;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: background 0.2s, border-color 0.2s;
+    }
+    .btn-change-pw:hover {
+        background: rgba(217,168,168,0.12);
+        border-color: rgba(217,168,168,0.3);
+    }
+
+    .pw-section-label {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: #d9a8a8;
+        font-weight: 600;
+        margin-bottom: 4px;
+    }
+
+    .info-row {
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        color: #a89a9a;
+        margin-bottom: 6px;
+    }
+    .info-row span { color: #e0cccc; }
+</style>
+
+<div class="profile-wrap">
+
+    <div class="profile-header">
+        <h1>My Profile</h1>
+        <p>Update your personal info and in-game role.</p>
+    </div>
+
+    <!-- Read-only info -->
+    <div class="profile-card" style="margin-bottom: 20px;">
+        <div class="info-row">Username: <span>{{ request.user.username }}</span></div>
+        <div class="info-row">Account role: <span>{{ request.user.get_role_display }}</span></div>
+    </div>
+
+    <!-- ── Profile form ── -->
+    <div class="profile-card">
+        <form method="post">
+            {% csrf_token %}
+
+            <div class="section-label">Personal info</div>
+
+            <label>First name</label>
+            {{ form.first_name }}
+
+            <label>Last name</label>
+            {{ form.last_name }}
+
+            <label>Email</label>
+            {{ form.email }}
+
+            <label>Phone</label>
+            {{ form.phone }}
+
+            <label>Address</label>
+            {{ form.address }}
+
+            <hr class="section-divider">
+
+            <!-- ── In-game role pills ── -->
+            <div class="section-label">In-game role</div>
+            <div class="ingame-role-row">
+                {% for radio in form.ingame_role %}
+                <label for="{{ radio.id_for_label }}">
+                    {{ radio.tag }}
+                    {{ radio.choice_label }}
+                </label>
+                {% endfor %}
+            </div>
+
+            <label style="margin-top: 18px;">Bio</label>
+            {{ form.bio }}
+
+            <button type="submit" class="btn-save">Save Profile</button>
+        </form>
+    </div>
+
+    <!-- ── Change Password card ── -->
+    <div class="profile-card" style="margin-top: 20px;">
+        <form method="post" action="{% url 'change_password' %}">
+            {% csrf_token %}
+
+            <div class="pw-section-label">Change Password</div>
+
+            <label>Current Password</label>
+            <input type="password" name="old_password" required autocomplete="current-password">
+
+            <label>New Password</label>
+            <input type="password" name="new_password1" required autocomplete="new-password">
+
+            <label>Confirm New Password</label>
+            <input type="password" name="new_password2" required autocomplete="new-password">
+
+            <button type="submit" class="btn-change-pw">🔑 Update Password</button>
+        </form>
+    </div>
+
+</div>
+
+<!-- ── In-game role pill JS ── -->
+<script>
+    (function () {
+        const labels = document.querySelectorAll('.ingame-role-row label');
+
+        labels.forEach(function (label) {
+            var inputId = label.getAttribute('for');
+            var input   = document.getElementById(inputId);
+
+            // highlight already-selected pill on page load
+            if (input && input.checked) {
+                label.classList.add('selected');
+            }
+
+            label.addEventListener('click', function () {
+                labels.forEach(function (l) { l.classList.remove('selected'); });
+                label.classList.add('selected');
+            });
+        });
+    }());
+</script>
+
+{% endblock %}

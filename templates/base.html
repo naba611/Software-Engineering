@@ -1,0 +1,169 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}Esports System{% endblock %}</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Raleway:wght@300;400;500&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #0a0e0e;
+      font-family: 'Raleway', sans-serif;
+      color: #f6e0e0;
+      min-height: 100vh;
+    }
+
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(ellipse at 80% 20%, rgba(0,80,80,0.45) 0%, transparent 55%),
+        radial-gradient(ellipse at 20% 80%, rgba(0,60,70,0.35) 0%, transparent 55%),
+        #0a0e0e;
+      z-index: -1;
+    }
+
+    .nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 32px;
+      height: 56px;
+      background: rgba(255,255,255,0.04);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid rgba(255,255,255,0.08);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .nav-brand {
+      font-family: 'Cinzel', serif;
+      font-size: 15px;
+      font-weight: 700;
+      color: #d9a8a8;
+      letter-spacing: 0.08em;
+      text-decoration: none;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .nav-links a {
+      font-size: 12px;
+      color: #c8b8b8;
+      text-decoration: none;
+      padding: 5px 11px;
+      border-radius: 20px;
+      border: 1px solid transparent;
+      transition: background 0.18s, border-color 0.18s, color 0.18s;
+    }
+
+    .nav-links a:hover {
+      background: rgba(217,168,168,0.1);
+      border-color: rgba(217,168,168,0.25);
+      color: #e8d0d0;
+    }
+
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .nav-username { font-size: 12px; color: #a89a9a; }
+    .nav-username strong { color: #fff; }
+
+    .role-pill {
+      font-size: 10px;
+      padding: 2px 9px;
+      border-radius: 20px;
+      font-weight: 600;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+    }
+
+    .role-pill.player    { background: rgba(100,200,180,0.15); color: #7ee8d0; border: 1px solid rgba(100,200,180,0.25); }
+    .role-pill.organizer { background: rgba(255,165,0,0.15);   color: #ffc56e; border: 1px solid rgba(255,165,0,0.25); }
+    .role-pill.admin     { background: rgba(217,168,168,0.15); color: #d9a8a8; border: 1px solid rgba(217,168,168,0.3); }
+
+    .btn-logout {
+      font-size: 12px;
+      color: #c8b8b8;
+      text-decoration: none;
+      padding: 5px 13px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      transition: background 0.18s, border-color 0.18s;
+    }
+
+    .btn-logout:hover {
+      background: rgba(220,80,80,0.15);
+      border-color: rgba(220,80,80,0.3);
+      color: #ff9999;
+    }
+
+    .messages { list-style: none; padding: 12px 32px 0; }
+    .messages li {
+      border-radius: 7px;
+      padding: 10px 14px;
+      margin-bottom: 8px;
+      font-size: 13px;
+    }
+    .messages li.success { background: rgba(80,180,100,0.12); border: 1px solid rgba(80,180,100,0.25); color: #88dd99; }
+    .messages li.error   { background: rgba(220,80,80,0.12);  border: 1px solid rgba(220,80,80,0.25);  color: #ff9999; }
+    .messages li.info    { background: rgba(80,140,220,0.12); border: 1px solid rgba(80,140,220,0.25); color: #88aaee; }
+    .messages li.warning { background: rgba(220,170,60,0.12); border: 1px solid rgba(220,170,60,0.25); color: #ffcc66; }
+
+    .main-content { padding: 32px; }
+  </style>
+</head>
+
+<body>
+
+{% if user.is_authenticated %}
+<nav class="nav">
+  <a class="nav-brand" href="/">⚔ Esports System</a>
+
+  <div class="nav-links">
+    {% if user.role == 'player' %}
+      <a href="{% url 'player_profile' %}">My Profile</a>
+    {% elif user.role == 'organizer' %}
+      <a href="{% url 'organizer_profile' %}">My Profile</a>
+    {% elif user.role == 'admin' %}
+      <a href="{% url 'admin_dashboard' %}">Dashboard</a>
+    {% endif %}
+  </div>
+
+  <div class="nav-right">
+    <span class="nav-username"><strong>{{ user.username }}</strong></span>
+    {% if user.role %}
+      <span class="role-pill {{ user.role }}">{{ user.role }}</span>
+    {% endif %}
+    <a href="{% url 'logout' %}" class="btn-logout">Logout</a>
+  </div>
+</nav>
+{% endif %}
+
+{% if messages %}
+<ul class="messages">
+  {% for message in messages %}
+    <li class="{{ message.tags }}">{{ message }}</li>
+  {% endfor %}
+</ul>
+{% endif %}
+
+<div class="main-content">
+  {% block content %}{% endblock %}
+</div>
+
+</body>
+</html>

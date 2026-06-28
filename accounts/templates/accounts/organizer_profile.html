@@ -1,0 +1,183 @@
+
+{% extends "base.html" %}
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<style>
+  .profile-wrap { max-width: 600px; margin: 0 auto; }
+  .profile-header { margin-bottom: 28px; }
+  .profile-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    color: #d9a8a8;
+    letter-spacing: 0.06em;
+  }
+  .profile-header p { color: #a89a9a; font-size: 13px; margin-top: 6px; }
+
+  .profile-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 28px 32px;
+  }
+
+  .profile-card label {
+    display: block;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: #7a6a6a;
+    font-weight: 600;
+    margin-bottom: 5px;
+    margin-top: 16px;
+  }
+
+  .profile-card input[type="text"],
+  .profile-card input[type="email"] {
+    width: 100%;
+    padding: 9px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 7px;
+    color: #e0cccc;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  /* ✅ ADDED PASSWORD INPUT */
+  .profile-card input[type="password"] {
+    width: 100%;
+    padding: 9px 12px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 7px;
+    color: #e0cccc;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    outline: none;
+    transition: border 0.2s;
+  }
+
+  .profile-card input[type="password"]:focus {
+    border-color: rgba(217,168,168,0.4);
+  }
+
+  .profile-card input:focus { border-color: rgba(217,168,168,0.4); }
+
+  .btn-save {
+    margin-top: 24px;
+    width: 100%;
+    padding: 11px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #c46060, #a04040);
+    color: #fff;
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-save:hover { background: linear-gradient(135deg, #d47070, #b05050); }
+
+  /* ✅ ADDED BUTTON */
+  .btn-change-pw {
+    margin-top: 24px;
+    width: 100%;
+    padding: 11px;
+    border-radius: 8px;
+    background: rgba(255,255,255,0.06);
+    border: 1px solid rgba(255,255,255,0.12);
+    color: #e0cccc;
+    font-family: 'Raleway', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s, border-color 0.2s;
+  }
+
+  .btn-change-pw:hover {
+    background: rgba(217,168,168,0.12);
+    border-color: rgba(217,168,168,0.3);
+  }
+
+  /* ✅ ADDED LABEL */
+  .pw-section-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: #d9a8a8;
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .info-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: #a89a9a;
+    margin-bottom: 6px;
+  }
+  .info-row span { color: #e0cccc; }
+</style>
+
+<div class="profile-wrap">
+
+  <div class="profile-header">
+    <h1>My Profile</h1>
+    <p>Update your contact information.</p>
+  </div>
+
+  <div class="profile-card" style="margin-bottom: 20px;">
+    <div class="info-row">Username: <span>{{ request.user.username }}</span></div>
+    <div class="info-row">Role: <span>{{ request.user.get_role_display }}</span></div>
+  </div>
+
+  <div class="profile-card">
+    <form method="post">
+      {% csrf_token %}
+
+      <label>First name</label>
+      {{ form.first_name }}
+
+      <label>Last name</label>
+      {{ form.last_name }}
+
+      <label>Email</label>
+      {{ form.email }}
+
+      <label>Phone</label>
+      {{ form.phone }}
+
+      <label>Address</label>
+      {{ form.address }}
+
+      <button type="submit" class="btn-save">Save Profile</button>
+    </form>
+  </div>
+
+  <!-- ✅ ADDED PASSWORD CARD -->
+  <div class="profile-card" style="margin-top: 20px;">
+    <form method="post" action="{% url 'change_password' %}">
+      {% csrf_token %}
+
+      <div class="pw-section-label">Change Password</div>
+
+      <label>Current Password</label>
+      <input type="password" name="old_password" required autocomplete="current-password">
+
+      <label>New Password</label>
+      <input type="password" name="new_password1" required autocomplete="new-password">
+
+      <label>Confirm New Password</label>
+      <input type="password" name="new_password2" required autocomplete="new-password">
+
+      <button type="submit" class="btn-change-pw">🔑 Update Password</button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}
+

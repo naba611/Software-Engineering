@@ -1,0 +1,159 @@
+{% extends 'base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  .dash-heading {
+    font-family: 'Cinzel', serif;
+    color: #d9a8a8;
+    font-size: 22px;
+    margin-bottom: 24px;
+    letter-spacing: 0.08em;
+  }
+
+  .section-title {
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #a89a9a;
+    margin-bottom: 12px;
+    padding-bottom: 6px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+
+  .dash-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 36px;
+    font-size: 13px;
+  }
+
+  .dash-table th {
+    text-align: left;
+    padding: 10px 14px;
+    background: rgba(255,255,255,0.04);
+    color: #a89a9a;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    font-size: 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.08);
+  }
+
+  .dash-table td {
+    padding: 10px 14px;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    color: #e0d0d0;
+  }
+
+  .dash-table tr:hover td {
+    background: rgba(255,255,255,0.03);
+  }
+
+  .dash-table td:first-child {
+    color: #d9a8a8;
+    font-weight: 500;
+  }
+
+  .empty-row td {
+    color: #5a4a4a;
+    font-style: italic;
+  }
+
+  .stat-cards {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 32px;
+    flex-wrap: wrap;
+  }
+
+  .stat-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px 28px;
+    min-width: 140px;
+  }
+
+  .stat-card .stat-num {
+    font-family: 'Cinzel', serif;
+    font-size: 28px;
+    color: #d9a8a8;
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+
+  .stat-card .stat-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: #6a5a5a;
+  }
+</style>
+
+<div class="dash-heading">⚔ Admin Dashboard</div>
+
+<!-- Stat Cards -->
+<div class="stat-cards">
+  <div class="stat-card">
+    <div class="stat-num">{{ players.count }}</div>
+    <div class="stat-label">Players</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-num">{{ organizers.count }}</div>
+    <div class="stat-label">Organizers</div>
+  </div>
+</div>
+
+<!-- Players Table -->
+<div class="section-title">🎮 Players</div>
+<table class="dash-table">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for p in players %}
+    <tr>
+      <td>{{ p.username }}</td>
+      <td>{{ p.email }}</td>
+      <td>{{ p.first_name }}</td>
+      <td>{{ p.last_name }}</td>
+    </tr>
+    {% empty %}
+    <tr class="empty-row"><td colspan="4">No players registered yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+<!-- Organizers Table -->
+<div class="section-title">🏢 Organizers</div>
+<table class="dash-table">
+  <thead>
+    <tr>
+      <th>Username</th>
+      <th>Email</th>
+      <th>First Name</th>
+      <th>Last Name</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for o in organizers %}
+    <tr>
+      <td>{{ o.username }}</td>
+      <td>{{ o.email }}</td>
+      <td>{{ o.first_name }}</td>
+      <td>{{ o.last_name }}</td>
+    </tr>
+    {% empty %}
+    <tr class="empty-row"><td colspan="4">No organizers registered yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}

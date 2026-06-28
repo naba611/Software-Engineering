@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% block title %}Player Dashboard{% endblock %}
+
+{% block content %}
+<style>
+  .dash-header { margin-bottom: 32px; }
+  .dash-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    color: #d9a8a8;
+    letter-spacing: 0.06em;
+  }
+  .dash-header p { color: #a89a9a; font-size: 14px; margin-top: 6px; }
+
+  .dash-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 16px;
+    max-width: 900px;
+  }
+
+  .dash-card {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 22px 20px;
+    text-decoration: none;
+    color: inherit;
+    transition: background 0.2s, border-color 0.2s, transform 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .dash-card:hover {
+    background: rgba(255,255,255,0.07);
+    border-color: rgba(217,168,168,0.3);
+    transform: translateY(-2px);
+  }
+
+  .dash-card-icon { font-size: 22px; }
+  .dash-card-title {
+    font-family: 'Cinzel', serif;
+    font-size: 13px;
+    color: #d9a8a8;
+    letter-spacing: 0.05em;
+  }
+  .dash-card-desc { font-size: 12px; color: #7a6a6a; line-height: 1.5; }
+  .dash-card.highlight {
+    border-color: rgba(217,168,168,0.25);
+    background: rgba(217,168,168,0.06);
+  }
+</style>
+
+<div class="dash-header">
+  <h1>Welcome, {{ user.username }}</h1>
+  <p>Here's your player hub.</p>
+</div>
+
+<div class="dash-grid">
+  <a href="{% url 'player_profile' %}" class="dash-card highlight">
+    <div class="dash-card-icon">⚙</div>
+    <div class="dash-card-title">My Profile</div>
+    <div class="dash-card-desc">Update your info and in-game role.</div>
+  </a>
+</div>
+
+{% endblock %}

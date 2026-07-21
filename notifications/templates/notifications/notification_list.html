@@ -1,0 +1,93 @@
+{% extends "base.html" %}
+{% block title %}Notifications{% endblock %}
+
+{% block content %}
+<style>
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    color: #d9a8a8;
+    letter-spacing: 0.06em;
+  }
+  .page-header p { color: #a89a9a; font-size: 14px; margin-top: 6px; }
+
+  .notif-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 700px;
+  }
+
+  .notif-card {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 16px 20px;
+    border-radius: 12px;
+    border: 1px solid rgba(255,255,255,0.07);
+    background: rgba(255,255,255,0.04);
+    transition: border-color 0.2s;
+  }
+  .notif-card.unread {
+    border-color: rgba(217,168,168,0.25);
+    background: rgba(217,168,168,0.06);
+  }
+
+  .notif-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    margin-top: 5px;
+    flex-shrink: 0;
+    background: #c46060;
+  }
+  .notif-dot.read { background: transparent; border: 1px solid #3a2a2a; }
+
+  .notif-body { flex: 1; }
+  .notif-message {
+    font-size: 14px;
+    color: #e0cccc;
+    line-height: 1.5;
+  }
+  .notif-time {
+    font-size: 12px;
+    color: #6a5a5a;
+    margin-top: 5px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a89a9a;
+    font-size: 15px;
+  }
+  .empty-state span { font-size: 36px; display: block; margin-bottom: 12px; }
+</style>
+
+<div class="page-header">
+  <h1>🔔 Notifications</h1>
+  <p>All your notifications — marked as read automatically.</p>
+</div>
+
+{% if notifications %}
+  <div class="notif-list">
+    {% for notif in notifications %}
+      <div class="notif-card {% if not notif.is_read %}unread{% endif %}">
+        <div class="notif-dot {% if notif.is_read %}read{% endif %}"></div>
+        <div class="notif-body">
+          <div class="notif-message">{{ notif.message }}</div>
+          <div class="notif-time">{{ notif.created_at|timesince }} ago</div>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <div class="empty-state">
+    <span>📭</span>
+    No notifications yet.
+  </div>
+{% endif %}
+
+{% endblock %}

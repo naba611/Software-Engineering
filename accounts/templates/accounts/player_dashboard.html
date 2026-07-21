@@ -63,6 +63,29 @@
     <div class="dash-card-title">My Profile</div>
     <div class="dash-card-desc">Update your info and in-game role.</div>
   </a>
+  <a href="{% url 'browse_teams' %}" class="dash-card">
+    <div class="dash-card-icon">👥</div>
+    <div class="dash-card-title">Browse Teams</div>
+    <div class="dash-card-desc">Find open teams to join.</div>
+  </a>
+
+  <a href="{% url 'create_team' %}" class="dash-card">
+    <div class="dash-card-icon">➕</div>
+    <div class="dash-card-title">Create Team</div>
+    <div class="dash-card-desc">Start your own team as captain.</div>
+  </a>
+
+  <a href="{% url 'my_team' %}" class="dash-card">
+    <div class="dash-card-icon">🛡</div>
+    <div class="dash-card-title">My Team</div>
+    <div class="dash-card-desc">View and manage your team.</div>
+  </a>
+
+  <a href="{% url 'my_invites' %}" class="dash-card">
+    <div class="dash-card-icon">📩</div>
+    <div class="dash-card-title">My Invites</div>
+    <div class="dash-card-desc">Accept or reject invitations.</div>
+  </a>
 </div>
 
 {% endblock %}

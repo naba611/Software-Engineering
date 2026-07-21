@@ -1,0 +1,129 @@
+{% extends "base.html" %}
+{% block title %}My Invites{% endblock %}
+
+{% block content %}
+
+<style>
+  .invites-wrap {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .invites-header {
+    margin-bottom: 28px;
+  }
+
+  .invites-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 24px;
+    color: #d9a8a8;
+    letter-spacing: 0.06em;
+  }
+
+  .invite-card {
+    background: rgba(255,255,255,0.035);
+    padding: 18px 20px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,0.08);
+    margin-bottom: 16px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .invite-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+  }
+
+  .invite-title {
+    font-size: 14px;
+    color: #e0cccc;
+    margin-bottom: 6px;
+  }
+
+  .invite-meta {
+    font-size: 12px;
+    color: #8a7a7a;
+    margin-bottom: 12px;
+  }
+
+  .invite-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  .btn-accept {
+    color: #88cc88;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(136,204,136,0.25);
+    background: rgba(136,204,136,0.08);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .btn-reject {
+    color: #ff9999;
+    padding: 6px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(220,80,80,0.25);
+    background: rgba(220,80,80,0.08);
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 600;
+  }
+
+  .btn-back {
+    display: inline-block;
+    margin-top: 20px;
+    font-size: 12px;
+    color: #c8a0a0;
+    text-decoration: none;
+  }
+
+  .empty-note {
+    font-size: 13px;
+    color: #5a4a4a;
+    padding: 12px 0;
+  }
+</style>
+
+<div class="invites-wrap">
+
+  <div class="invites-header">
+    <h1>My Invites</h1>
+  </div>
+
+  {% if invites %}
+    {% for inv in invites %}
+      <div class="invite-card">
+
+        <div class="invite-title">
+          {{ inv.team.name }} ({{ inv.team.get_game_display }})
+        </div>
+
+        <div class="invite-meta">
+          Invited by {{ inv.team.captain.username }}
+        </div>
+
+        <div class="invite-actions">
+          <a href="{% url 'respond_invite' inv.pk 'accept' %}" class="btn-accept">
+            ✔ Accept
+          </a>
+          <a href="{% url 'respond_invite' inv.pk 'reject' %}" class="btn-reject">
+            ✖ Reject
+          </a>
+        </div>
+
+      </div>
+    {% endfor %}
+  {% else %}
+    <p class="empty-note">No pending invites.</p>
+  {% endif %}
+
+  <a href="{% url 'team_list' %}" class="btn-back">← Back to Teams</a>
+
+</div>
+
+{% endblock %}
+

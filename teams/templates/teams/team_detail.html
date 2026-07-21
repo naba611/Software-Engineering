@@ -1,0 +1,155 @@
+{% extends "base.html" %}
+{% block title %}{{ team.name }}{% endblock %}
+
+{% block content %}
+<style>
+  h2, h3 { font-family: 'Cinzel', serif; color: #d9a8a8; margin-bottom: 16px; }
+  .card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  p { font-size: 13px; color: #c8b8b8; margin-bottom: 8px; }
+  .btn {
+    display: inline-block;
+    padding: 7px 16px;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    text-decoration: none;
+    border: none;
+    margin-right: 6px;
+    margin-top: 4px;
+  }
+  .btn-success { background: rgba(60,160,80,0.6);  color:#fff; border:1px solid rgba(80,200,100,0.4); }
+  .btn-danger  { background: rgba(180,50,50,0.6);  color:#fff; border:1px solid rgba(220,80,80,0.4); }
+  .btn-primary { background: rgba(180,80,80,0.6);  color:#fff; border:1px solid rgba(220,120,120,0.4); }
+  .btn-info    { background: rgba(40,120,160,0.6); color:#fff; border:1px solid rgba(60,160,200,0.4); }
+  .btn-warn    { background: rgba(180,130,0,0.6);  color:#fff; border:1px solid rgba(220,170,0,0.4); }
+  .btn:hover { opacity: 0.85; }
+  .member-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 0;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+  }
+  .member-row:last-child { border-bottom: none; }
+  .badge-captain {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    background: rgba(200,160,40,0.3);
+    color: #f0c040;
+    border: 1px solid rgba(200,160,40,0.4);
+    margin-left: 8px;
+  }
+  .form-inline {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .form-inline input {
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 8px 12px;
+    color: #f6e0e0;
+    font-size: 13px;
+    width: 220px;
+  }
+  .team-code {
+    display: inline-block;
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 6px;
+    padding: 4px 14px;
+    font-family: monospace;
+    font-size: 16px;
+    color: #d9a8a8;
+    letter-spacing: 0.1em;
+  }
+  a { text-decoration: none; }
+</style>
+
+<!-- Team Info -->
+<div class="card">
+  <h2>{{ team.name }}</h2>
+  <p>Game: <strong style="color:#fff">{{ team.get_game_display }}</strong></p>
+  <p>Captain: <strong style="color:#fff">{{ team.captain.username }}</strong></p>
+  <p>Members: {{ members.count }} / {{ team.max_size }}</p>
+  {% if request.user == team.captain %}
+    <p>Team Code: <span class="team-code">{{ team.team_code }}</span> — share with players to join directly</p>
+  {% endif %}
+</div>
+
+<!-- Members -->
+<div class="card">
+  <h3>👥 Members</h3>
+  {% for m in members %}
+    <div class="member-row">
+      <div>
+        <span style="color:#fff;">{{ m.user.username }}</span>
+        {% if m.user == team.captain %}
+          <span class="badge-captain">⭐ Captain</span>
+        {% endif %}
+      </div>
+      <div>
+        {% if request.user == team.captain and m.user != team.captain %}
+          <a href="{% url 'transfer_captain' team.pk m.user.pk %}" class="btn btn-warn">Make Captain</a>
+          <a href="{% url 'remove_member' team.pk m.user.pk %}" class="btn btn-danger"
+             onclick="return confirm('Remove {{ m.user.username }}?')">Kick</a>
+        {% endif %}
+        {% if m.user == request.user and m.user != team.captain %}
+          <a href="{% url 'leave_team' team.pk %}" class="btn btn-danger"
+             onclick="return confirm('Leave this team?')">Leave Team</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endfor %}
+</div>
+
+<!-- Captain Controls -->
+{% if request.user == team.captain %}
+
+  <!-- Invite player -->
+  <div class="card">
+    <h3>✉ Invite a Player</h3>
+    {% if team.is_full %}
+      <p style="color:#ff8888;">Team is full — no more invites can be sent.</p>
+    {% else %}
+      <form method="post" action="{% url 'invite_player' team.pk %}">
+        {% csrf_token %}
+        <div class="form-inline">
+          {{ invite_form.username }}
+          <button type="submit" class="btn btn-primary">Send Invite</button>
+        </div>
+        <p style="margin-top:8px; font-size:12px; color:#888;">Enter the exact username of the player you want to invite.</p>
+      </form>
+    {% endif %}
+  </div>
+
+  <!-- Pending invites -->
+  <div class="card">
+    <h3>📋 Pending Invites</h3>
+    {% if invites %}
+      {% for inv in invites %}
+        <div class="member-row">
+          <span style="color:#fff;">{{ inv.invited_user.username }}</span>
+          <span style="color:#f0c040; font-size:12px;">Pending</span>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p>No pending invites.</p>
+    {% endif %}
+  </div>
+
+{% endif %}
+
+<a href="{% url 'team_list' %}" class="btn btn-info">← Back to Teams</a>
+{% endblock %}
+

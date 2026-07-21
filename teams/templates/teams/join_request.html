@@ -1,0 +1,128 @@
+{% extends "base.html" %}
+{% block title %}Join Requests{% endblock %}
+
+{% block content %}
+<style>
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    color: #d9a8a8;
+    letter-spacing: 0.06em;
+  }
+  .page-header p { color: #a89a9a; font-size: 14px; margin-top: 6px; }
+
+  .request-list { display: flex; flex-direction: column; gap: 14px; max-width: 700px; }
+
+  .request-card {
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 12px;
+    padding: 18px 22px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+
+  .req-info { flex: 1; }
+  .req-player {
+    font-family: 'Cinzel', serif;
+    font-size: 15px;
+    color: #f0d8d8;
+  }
+  .req-team {
+    font-size: 13px;
+    color: #a89a9a;
+    margin-top: 4px;
+  }
+  .req-team span { color: #e0cccc; }
+  .req-time {
+    font-size: 12px;
+    color: #6a5a5a;
+    margin-top: 4px;
+  }
+
+  .req-actions { display: flex; gap: 10px; }
+
+  .btn-approve, .btn-reject {
+    padding: 8px 18px;
+    border-radius: 7px;
+    border: none;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .btn-approve {
+    background: rgba(60, 180, 100, 0.2);
+    color: #7ee8a2;
+    border: 1px solid rgba(60,180,100,0.35);
+  }
+  .btn-approve:hover { background: rgba(60, 180, 100, 0.35); }
+
+  .btn-reject {
+    background: rgba(220, 80, 80, 0.2);
+    color: #ff9999;
+    border: 1px solid rgba(220,80,80,0.35);
+  }
+  .btn-reject:hover { background: rgba(220, 80, 80, 0.35); }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a89a9a;
+    font-size: 15px;
+  }
+  .empty-state span { font-size: 36px; display: block; margin-bottom: 12px; }
+</style>
+
+<div class="page-header">
+  <h1>📥 Join Requests</h1>
+  <p>Players requesting to join your teams. Approve or reject them below.</p>
+</div>
+
+{% if join_requests %}
+  <div class="request-list">
+    {% for req in join_requests %}
+      <div class="request-card">
+        <div class="req-info">
+          <div class="req-player">👤 {{ req.player.username }}</div>
+          <div class="req-team">
+            Wants to join: <span>{{ req.team.name }}</span>
+            <span style="margin-left:8px; font-size:11px; padding:2px 8px; border-radius:20px;
+              {% if req.team.game == 'valorant' %}background:rgba(255,70,85,0.2);color:#ff8c95;
+              {% else %}background:rgba(255,165,0,0.2);color:#ffc56e;{% endif %}">
+              {{ req.team.get_game_display }}
+            </span>
+          </div>
+          <div class="req-time">Requested {{ req.created_at|timesince }} ago</div>
+        </div>
+
+        <div class="req-actions">
+          <!-- Approve -->
+          <form method="POST" action="{% url 'handle_join_request' req.pk 'approve' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-approve">✓ Approve</button>
+          </form>
+          <!-- Reject -->
+          <form method="POST" action="{% url 'handle_join_request' req.pk 'reject' %}">
+            {% csrf_token %}
+            <button type="submit" class="btn-reject">✕ Reject</button>
+          </form>
+        </div>
+      </div>
+    {% endfor %}
+  </div>
+
+{% else %}
+  <div class="empty-state">
+    <span>📭</span>
+    No pending join requests for your teams.
+  </div>
+{% endif %}
+
+{% endblock %}
+

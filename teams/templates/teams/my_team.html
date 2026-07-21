@@ -1,0 +1,353 @@
+{% extends "base.html" %}
+{% block title %}My Team{% endblock %}
+
+{% block content %}
+<style>
+  .page-header { margin-bottom: 28px; }
+  .page-header h1 {
+    font-family: 'Cinzel', serif;
+    font-size: 26px;
+    color: #d9a8a8;
+    letter-spacing: 0.06em;
+  }
+  .page-header p { color: #a89a9a; font-size: 14px; margin-top: 6px; }
+
+  .team-section {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 14px;
+    padding: 24px 28px;
+    margin-bottom: 28px;
+    max-width: 780px;
+  }
+
+  .team-section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .team-title {
+    font-family: 'Cinzel', serif;
+    font-size: 20px;
+    color: #f0d8d8;
+  }
+
+  .game-badge {
+    font-size: 11px;
+    padding: 3px 12px;
+    border-radius: 20px;
+    font-weight: 600;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+  .game-badge.valorant { background: rgba(255,70,85,0.2); color: #ff8c95; border: 1px solid rgba(255,70,85,0.3); }
+  .game-badge.pubg     { background: rgba(255,165,0,0.2); color: #ffc56e; border: 1px solid rgba(255,165,0,0.3); }
+
+  .team-meta-row {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+    font-size: 13px;
+    color: #a89a9a;
+  }
+  .team-meta-row span { color: #e0cccc; font-weight: 500; }
+
+  .slot-bar-wrap { margin-bottom: 20px; }
+  .slot-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 12px;
+    color: #a89a9a;
+    margin-bottom: 5px;
+  }
+  .slot-bar-bg {
+    height: 6px;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+  .slot-bar-fill {
+    height: 100%;
+    border-radius: 4px;
+    background: linear-gradient(90deg, #c46060, #d9a8a8);
+  }
+  .slot-bar-fill.full { background: linear-gradient(90deg, #555, #777); }
+
+  .members-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+  .members-table th {
+    text-align: left;
+    color: #7a6a6a;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    padding: 8px 10px;
+    border-bottom: 1px solid rgba(255,255,255,0.07);
+  }
+  .members-table td {
+    padding: 10px 10px;
+    color: #e0cccc;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    vertical-align: middle;
+  }
+  .members-table tr:last-child td { border-bottom: none; }
+
+  .role-tag {
+    font-size: 10px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    background: rgba(217,168,168,0.15);
+    color: #d9a8a8;
+    border: 1px solid rgba(217,168,168,0.25);
+  }
+  .role-tag.captain {
+    background: rgba(255,200,80,0.15);
+    color: #ffd580;
+    border-color: rgba(255,200,80,0.3);
+  }
+
+  /* ── action buttons ── */
+  .btn-remove, .btn-leave, .btn-transfer {
+    padding: 5px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'Raleway', sans-serif;
+    cursor: pointer;
+    transition: background 0.2s;
+    border: none;
+    display: inline-block;
+    text-decoration: none;
+  }
+
+  .btn-remove {
+    border: 1px solid rgba(220,80,80,0.35);
+    background: rgba(220,80,80,0.15);
+    color: #ff9999;
+  }
+  .btn-remove:hover { background: rgba(220,80,80,0.3); }
+
+  /* leave button — amber tone so it's distinct from remove */
+  .btn-leave {
+    border: 1px solid rgba(255,165,0,0.35);
+    background: rgba(255,165,0,0.12);
+    color: #ffc56e;
+  }
+  .btn-leave:hover { background: rgba(255,165,0,0.25); }
+
+  /* transfer captaincy — subtle teal */
+  .btn-transfer {
+    border: 1px solid rgba(100,200,180,0.3);
+    background: rgba(100,200,180,0.1);
+    color: #7ee8d0;
+    font-size: 11px;
+    padding: 4px 10px;
+  }
+  .btn-transfer:hover { background: rgba(100,200,180,0.2); }
+
+  .action-cell { display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+
+  /* captain warning box shown when captain tries to leave */
+  .captain-notice {
+    margin-top: 14px;
+    padding: 10px 14px;
+    background: rgba(255,200,80,0.08);
+    border: 1px solid rgba(255,200,80,0.2);
+    border-radius: 8px;
+    font-size: 12px;
+    color: #ffd580;
+  }
+
+  .team-code-box {
+    margin-top: 18px;
+    padding: 12px 16px;
+    background: rgba(255,255,255,0.04);
+    border: 1px dashed rgba(255,255,255,0.12);
+    border-radius: 8px;
+    font-size: 13px;
+    color: #a89a9a;
+  }
+  .team-code-box strong {
+    color: #d9a8a8;
+    font-family: 'Cinzel', serif;
+    letter-spacing: 0.1em;
+    font-size: 16px;
+    margin-left: 8px;
+  }
+
+  .empty-state {
+    text-align: center;
+    padding: 60px 20px;
+    color: #a89a9a;
+    font-size: 15px;
+  }
+  .empty-state span { font-size: 36px; display: block; margin-bottom: 12px; }
+
+  .btn-browse {
+    display: inline-block;
+    margin-top: 16px;
+    padding: 10px 24px;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #c46060, #a04040);
+    color: #fff;
+    font-family: 'Raleway', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.2s;
+  }
+  .btn-browse:hover { background: linear-gradient(135deg, #d47070, #b05050); }
+</style>
+
+<div class="page-header">
+  <h1>My Team</h1>
+  <p>View and manage the teams you are enrolled in.</p>
+</div>
+
+{% if team_data %}
+  {% for item in team_data %}
+  <div class="team-section">
+    <div class="team-section-header">
+      <div class="team-title">{{ item.team.name }}</div>
+      <span class="game-badge {{ item.team.game }}">{{ item.team.get_game_display }}</span>
+    </div>
+
+    <div class="team-meta-row">
+      <div>Captain: <span>{{ item.team.captain.username }}</span></div>
+      <div>Members: <span>{{ item.current }} / {{ item.max }}</span></div>
+      <div>Status:
+        {% if item.current >= item.max %}
+          <span style="color:#aaa;">Full</span>
+        {% else %}
+          <span style="color:#7ee8a2;">Open</span>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Slot bar -->
+    <div class="slot-bar-wrap">
+      <div class="slot-label">
+        <span>Team capacity</span>
+        <span>{{ item.current }} / {{ item.max }}</span>
+      </div>
+      <div class="slot-bar-bg">
+        <div class="slot-bar-fill {% if item.current >= item.max %}full{% endif %}"
+             style="width: {% widthratio item.current item.max 100 %}%">
+        </div>
+      </div>
+    </div>
+
+    <!-- Members table -->
+    <table class="members-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Username</th>
+          <th>Role</th>
+          <th>Joined</th>
+          <th>Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for ms in item.members %}
+        <tr>
+          <td style="color:#6a5a5a;">{{ forloop.counter }}</td>
+          <td>
+            <a href="{% url 'view_player_profile' ms.user.pk %}"
+               style="color:#e0cccc; text-decoration:none;">
+              {{ ms.user.username }}
+            </a>
+          </td>
+          <td>
+            {% if ms.user == item.team.captain %}
+              <span class="role-tag captain">Captain</span>
+            {% else %}
+              <span class="role-tag">Member</span>
+            {% endif %}
+          </td>
+          <td style="color:#6a5a5a;">{{ ms.joined_at|date:"M d, Y" }}</td>
+          <td>
+            <div class="action-cell">
+
+              {% if item.is_captain and ms.user != item.team.captain %}
+                {# ── captain sees: Remove + Make Captain buttons for each member ── #}
+                <form method="POST" action="{% url 'remove_member' item.team.pk ms.user.pk %}"
+                      onsubmit="return confirm('Remove {{ ms.user.username }} from the team?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-remove">Remove</button>
+                </form>
+
+                <a href="{% url 'transfer_captain' item.team.pk ms.user.pk %}"
+                   class="btn-transfer"
+                   onclick="return confirm('Transfer captaincy to {{ ms.user.username }}? You will become a regular member.')">
+                  Make Captain
+                </a>
+
+              {% elif not item.is_captain and ms.user == request.user %}
+                {# ── non-captain member sees Leave button only on their own row ── #}
+                <form method="POST" action="{% url 'leave_team' item.team.pk %}"
+                      onsubmit="return confirm('Are you sure you want to leave {{ item.team.name }}?')">
+                  {% csrf_token %}
+                  <button type="submit" class="btn-leave">Leave Team</button>
+                </form>
+
+              {% else %}
+                <span style="color:#4a3a3a; font-size:12px;">—</span>
+              {% endif %}
+
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+
+    {# ── Captain notice: explains they must transfer before leaving ── #}
+    {% if item.is_captain and item.current > 1 %}
+    <div class="captain-notice">
+      You are the captain. To leave this team, first transfer captaincy to another member using the
+      "Make Captain" button above, then you can leave from your new member row.
+    </div>
+    {% endif %}
+
+    {# ── Captain leaving alone: if only member, show disband option ── #}
+    {% if item.is_captain and item.current == 1 %}
+    <div style="margin-top: 14px;">
+      <form method="POST" action="{% url 'leave_team' item.team.pk %}"
+            onsubmit="return confirm('You are the only member. Leaving will disband {{ item.team.name }}. Continue?')">
+        {% csrf_token %}
+        <button type="submit" class="btn-leave">Disband Team</button>
+      </form>
+    </div>
+    {% endif %}
+
+    <!-- Team code — captain only -->
+    {% if item.is_captain %}
+    <div class="team-code-box">
+      Team Code: <strong>{{ item.team.team_code }}</strong>
+      <span style="font-size:12px; margin-left:12px; color:#6a5a5a;">Share this with players to let them join directly.</span>
+    </div>
+    {% endif %}
+
+  </div>
+  {% endfor %}
+
+{% else %}
+  <div class="empty-state">
+    <span>🏚</span>
+    You are not enrolled in any team yet.
+    <br>
+    <a href="{% url 'browse_teams' %}" class="btn-browse">Browse Teams</a>
+  </div>
+{% endif %}
+
+{% endblock %}
+
